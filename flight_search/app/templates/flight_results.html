@@ -1,0 +1,88 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flight Results</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'flight_results.css' %}">
+</head>
+<body>
+  <div class="container">
+    <div class="results-card">
+      
+      <!-- Title -->
+      <h1 class="page-title">FLIGHT RESULTS</h1>
+      
+      <!-- Search Info -->
+      <div id="info" class="search-info"></div>
+      
+      <!-- Results Container -->
+      <div id="results" class="results-container"></div>
+      
+      <!-- Back Link -->
+      <div class="back-link-container">
+        <a href="/amadeus/" class="back-link">← Back to search</a>
+      </div>
+      
+    </div>
+  </div>
+
+  <script>
+  function renderResults(list){
+    const container = document.getElementById('results');
+    container.innerHTML = '';
+    if(!list || list.length===0){ container.innerHTML = '<p>No results</p>'; return; }
+
+    list.forEach((item, idx)=>{
+      const el = document.createElement('div'); el.className='flight';
+      el.innerHTML = `
+        <p><strong>${item.flight_info}</strong></p>
+        <p>${item.price || ''}</p>
+        <button data-idx="${idx}">Book this flight</button>
+      `;
+      container.appendChild(el);
+    });
+
+    container.querySelectorAll('button').forEach(btn=>{
+      btn.addEventListener('click', function(){
+        const idx = parseInt(this.dataset.idx, 10);
+        const selected = list[idx];
+        // Save selected flight and navigate to booking
+        sessionStorage.setItem('selected_flight', JSON.stringify(selected));
+        window.location.href = '/amadeus/booking/';
+      })
+    });
+  }
+
+  // Load from sessionStorage
+  (function(){
+    const raw = sessionStorage.getItem('search_results');
+    const params = sessionStorage.getItem('search_params');
+    const count = sessionStorage.getItem('search_count');
+    if(params){
+      try{
+        const p = JSON.parse(params);
+        const parts = [];
+        if(p.origin && p.destination){ parts.push(`${p.origin} → ${p.destination}`); }
+        if(p.departure_date){ parts.push(`Depart: ${p.departure_date}`); }
+        if(p.return_date){ parts.push(`Return: ${p.return_date}`); }
+        if(p.adults){ parts.push(`${p.adults} adult${p.adults>1? 's' : ''}`); }
+        document.getElementById('info').innerText = `Search: ${parts.join(' | ')}`;
+      }catch(e){
+        document.getElementById('info').innerText = `Search: ${params}`;
+      }
+    }
+    try{
+      const list = raw ? JSON.parse(raw) : [];
+      renderResults(list);
+    }catch(e){
+      document.getElementById('results').innerText = 'Failed to load results';
+    }
+  })();
+  </script>
+</body>
+</html>

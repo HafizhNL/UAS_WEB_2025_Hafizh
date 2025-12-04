@@ -1,0 +1,3 @@
+AMADEUS_API_KEY = "isi api key"
+AMADEUS_API_SECRET = "isi api secret"
+AMADEUS_HOSTNAME = "test" 

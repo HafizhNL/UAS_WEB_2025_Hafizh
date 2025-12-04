@@ -1,0 +1,136 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flight Booking</title>
+  
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'flight_booking.css' %}">
+</head>
+<body>
+  <div class="container">
+    <div class="booking-card">
+      
+      <!-- Title -->
+      <h1 class="page-title">FLIGHT BOOKING</h1>
+      
+      <!-- Flight Summary -->
+      <div id="flightSummary" class="flight-summary"></div>
+      
+      <!-- Booking Form -->
+      <form id="bookingForm">
+        
+        <!-- Passenger Name -->
+        <div class="form-group">
+          <label>Passenger Name</label>
+          <input 
+            type="text" 
+            name="passenger_name" 
+            class="form-control" 
+            placeholder="Enter full name" 
+            required
+          >
+        </div>
+        
+        <!-- Passport Number -->
+        <div class="form-group">
+          <label>Passport Number</label>
+          <input 
+            type="text" 
+            name="passport_number" 
+            class="form-control" 
+            placeholder="Enter passport number" 
+            required
+          >
+        </div>
+        
+        <!-- Submit Button -->
+        <button type="submit" class="btn-confirm">Confirm Booking</button>
+        
+      </form>
+      
+      <!-- Error Message -->
+      <div id="error" class="error-message"></div>
+      
+      <!-- Back Link -->
+      <div class="back-link-container">
+        <a href="/amadeus/results/" class="back-link">← Back to results</a>
+      </div>
+      
+    </div>
+  </div>
+
+  <!-- JavaScript Original (TIDAK DIUBAH) -->
+  <script>
+  function getCSRF(){
+    const name = 'csrftoken=';
+    const cookies = document.cookie.split(';');
+    for(let c of cookies){ c = c.trim(); if(c.startsWith(name)) return c.substring(name.length); }
+    return null;
+  }
+
+  (function(){
+    const raw = sessionStorage.getItem('selected_flight');
+    if(!raw){ document.getElementById('flightSummary').innerText = 'No flight selected.'; return; }
+    const flight = JSON.parse(raw);
+    document.getElementById('flightSummary').innerHTML = `
+      <p><strong>${flight.flight_info}</strong></p>
+      <p>${flight.price || ''}</p>
+    `;
+
+    document.getElementById('bookingForm').addEventListener('submit', async function(e){
+      e.preventDefault();
+      document.getElementById('error').textContent = '';
+      const f = e.target;
+      const payload = {
+        flight_id: flight.flight_id || flight.flight_id,
+        flight_info: flight.flight_info || '',
+        passenger_name: f.passenger_name.value.trim(),
+        passport_number: f.passport_number.value.trim()
+      };
+
+      try{
+        const csrftoken = getCSRF();
+        const headers = {'Content-Type':'application/json'};
+        if(csrftoken) headers['X-CSRFToken'] = csrftoken;
+
+        const res = await fetch('/amadeus/api/confirm-booking/', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(payload)
+        });
+
+        const contentType = res.headers.get('content-type') || '';
+        if(!contentType.includes('application/json')){
+          const text = await res.text();
+          console.error('Non-JSON response', res.status, text);
+          document.getElementById('error').textContent = `Server error (${res.status}). See console for details.`;
+          return;
+        }
+
+        const data = await res.json();
+        if(!data.success){
+          document.getElementById('error').textContent = data.error || JSON.stringify(data.errors || data);
+          return;
+        }
+
+        const bookingRef = data.data && data.data.booking_reference ? data.data.booking_reference : null;
+        if(bookingRef){
+          // redirect to confirmation page
+          window.location.href = `/amadeus/booking/confirmation/${bookingRef}/`;
+        }else{
+          document.getElementById('error').textContent = 'Booking created but no reference returned.';
+        }
+
+      }catch(err){
+        document.getElementById('error').textContent = 'Server error. See console.';
+        console.error(err);
+      }
+    });
+  })();
+  </script>
+</body>
+</html>

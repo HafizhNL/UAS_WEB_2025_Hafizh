@@ -1,0 +1,351 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* FIX: Prevent horizontal scroll */
+html {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #003366 0%, #0066cc 50%, #0099ff 100%);
+  min-height: 100vh;
+  width: 100vw;
+  max-width: 100%;
+  overflow-x: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  position: relative;
+}
+
+/* Background Pattern */
+body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* Container */
+.container {
+  max-width: 700px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+  max-height: 95vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom Scrollbar */
+.container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+}
+
+.container::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.results-card {
+  background: linear-gradient(to bottom, #ffffff 0%, #f0f8ff 100%);
+  border-radius: 20px;
+  padding: 30px;
+  box-shadow: 
+    0 20px 60px rgba(0, 51, 102, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  animation: slideUp 0.6s ease-out;
+  position: relative;
+  overflow: hidden;
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Card Decoration */
+.results-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(0, 102, 204, 0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.results-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #003366 0%, #0066cc 50%, #0099ff 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Title */
+.page-title {
+  font-size: 28px;
+  font-weight: 700;
+  background: linear-gradient(135deg, #003366 0%, #0066cc 50%, #0099ff 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  margin-bottom: 25px;
+  letter-spacing: 1px;
+  position: relative;
+  padding-bottom: 12px;
+  z-index: 1;
+}
+
+.page-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, #003366, #0066cc, #0099ff);
+  border-radius: 2px;
+  box-shadow: 0 2px 10px rgba(0, 102, 204, 0.4);
+}
+
+/* Search Info */
+.search-info {
+  background: #e6f2ff;
+  border: 2px solid #b3d9ff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  font-size: 13px;
+  color: #003366;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.search-info:empty {
+  display: none;
+}
+
+/* Results Container */
+.results-container {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 100%;
+}
+
+.results-container p {
+  text-align: center;
+  color: #666;
+  font-size: 14px;
+  padding: 30px;
+}
+
+/* Flight Item - FIX: No horizontal overflow */
+.flight {
+  background: white;
+  border: 2px solid #cce5ff;
+  border-radius: 12px;
+  padding: 18px 20px;
+  margin-bottom: 15px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 102, 204, 0.05);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.flight:hover {
+  border-color: #0066cc;
+  box-shadow: 0 6px 20px rgba(0, 102, 204, 0.15);
+  transform: translateY(-2px);
+}
+
+.flight p {
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
+.flight p:first-child {
+  flex: 1;
+  font-size: 14px;
+  color: #1a1a1a;
+  line-height: 1.6;
+  min-width: 0;
+}
+
+.flight p:first-child strong {
+  font-weight: 600;
+  color: #003366;
+}
+
+.flight p:nth-child(2) {
+  font-size: 16px;
+  font-weight: 700;
+  color: #0066cc;
+  min-width: 120px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* Book Button */
+.flight button {
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #003366 0%, #0066cc 100%);
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.flight button:hover {
+  background: linear-gradient(135deg, #004080 0%, #0073e6 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 102, 204, 0.4);
+}
+
+.flight button:active {
+  transform: translateY(0);
+}
+
+/* Back Link Container */
+.back-link-container {
+  text-align: center;
+  margin-top: 25px;
+  padding-top: 20px;
+  border-top: 2px solid #e6f2ff;
+  position: relative;
+  z-index: 1;
+}
+
+.back-link {
+  display: inline-block;
+  color: #0066cc;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+}
+
+.back-link:hover {
+  background: #e6f2ff;
+  color: #003366;
+  transform: translateX(-5px);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  body {
+    padding: 10px;
+  }
+  
+  .results-card {
+    padding: 25px 20px;
+  }
+  
+  .page-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .flight {
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 16px;
+  }
+  
+  .flight p:nth-child(2) {
+    text-align: left;
+    min-width: auto;
+  }
+  
+  .flight button {
+    width: 100%;
+    padding: 12px;
+  }
+}
+
+@media (max-height: 700px) {
+  .results-card {
+    padding: 20px;
+  }
+  
+  .page-title {
+    font-size: 24px;
+    margin-bottom: 18px;
+  }
+  
+  .flight {
+    padding: 14px 16px;
+    margin-bottom: 12px;
+  }
+}
